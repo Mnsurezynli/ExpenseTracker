@@ -1,6 +1,7 @@
 package org.example.Exception;
 
-public class InvalidInputException extends Throwable {
-    public InvalidInputException(String invalidUsernameOrPassword) {
+public class InvalidInputException extends RuntimeException {
+    public InvalidInputException(String message) {
+        super(message);
     }
 }

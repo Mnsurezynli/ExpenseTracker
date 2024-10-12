@@ -1,6 +1,7 @@
 package org.example.Exception;
 
-public class ResourceNotFoundException extends X {
-    public ResourceNotFoundException(String s) {
+public class ResourceNotFoundException extends RuntimeException {
+    public ResourceNotFoundException(String message) {
+        super(message);
     }
 }

@@ -63,15 +63,12 @@ public class CategoryServiceImpl implements ICategoryService {
         CategoryDto categoryDto = new CategoryDto();
         categoryDto.setId(category.getId());
         categoryDto.setName(category.getName());
-        categoryDto.setExpense(category.getExpense());
         return categoryDto;
     }
 
     public Category ConvertToEntity(CategoryDto categoryDto) {
         Category category = new Category();
         category.setId(categoryDto.getId());
-        category.setName(categoryDto.getName());
-        category.setExpense(categoryDto.getExpense());
         return category;
     }
 }

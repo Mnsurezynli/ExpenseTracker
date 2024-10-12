@@ -5,6 +5,7 @@ import org.example.Exception.ResourceAlreadyExistsException;
 import org.example.Exception.ResourceNotFoundException;
 import org.example.Model.Category;
 import org.example.Model.Expense;
+import org.example.Model.User;
 import org.example.Repository.CategoryRepository;
 import org.example.Repository.ExpenseRepository;
 import org.example.Service.IExpenseService;
@@ -47,6 +48,8 @@ public class ExpenseServiceImpl implements IExpenseService {
 
         expense.setName(expenseDto.getName());
         expense.setTime(expenseDto.getTime());
+   //     expense.setCategory(new Category());
+      //  expense.setUser(new User());
 
 
 
@@ -100,7 +103,8 @@ public class ExpenseServiceImpl implements IExpenseService {
         expenseDto.setId(expense.getId());
         expenseDto.setName(expense.getName());
         expenseDto.setTime(expense.getTime());
-
+        expenseDto.setCategoryId(expense.getCategory().getId());
+        expenseDto.setUserId(expense.getUser().getId());
         return expenseDto;
     }
 
@@ -109,7 +113,8 @@ public class ExpenseServiceImpl implements IExpenseService {
         expense.setId(expenseDto.getId());
         expense.setName(expenseDto.getName());
         expense.setTime(expenseDto.getTime());
-
+     //   expense.setCategory(new Category());
+     //   expense.setUser(new User());
         return expense;
     }
 }

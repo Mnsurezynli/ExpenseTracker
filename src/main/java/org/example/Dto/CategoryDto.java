@@ -8,13 +8,7 @@ public class CategoryDto {
 
     private Long id;
     private String name;
-    private List<Expense> expense;
 
-    public CategoryDto(Long id, String name, List<Expense> expense) {
-        this.id = id;
-        this.name = name;
-        this.expense = expense;
-    }
 
     public CategoryDto() {
     }
@@ -35,11 +29,5 @@ public class CategoryDto {
         this.name = name;
     }
 
-    public List<Expense> getExpense() {
-        return expense;
-    }
 
-    public void setExpense(List<Expense> expense) {
-        this.expense = expense;
-    }
 }

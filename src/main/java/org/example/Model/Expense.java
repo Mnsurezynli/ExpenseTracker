@@ -1,6 +1,8 @@
 package org.example.Model;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
+import java.util.Date;
 
 @Table(name = "expense")
 @Entity
@@ -8,10 +10,14 @@ public class Expense {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    @Column
+    @Column(name = "name")
     private String name;
-    @Column
-    private String time;
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "createdAt")
+    private Date createdAt;
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "endDate")
+    private Date endDate;
     @ManyToOne
     @JoinColumn(name = "category_id")
     private Category category;
@@ -19,18 +25,18 @@ public class Expense {
     @JoinColumn(name = "user_id")
     private User user;
 
-
-    public Expense(Long id, String name, String time, Category category, User user) {
+    public Expense(Long id, String name, Date createdAt, Date endDate, Category category, User user) {
         this.id = id;
         this.name = name;
-        this.time = time;
+        this.createdAt = createdAt;
+        this.endDate = endDate;
         this.category = category;
         this.user = user;
     }
 
     public Expense() {
-
     }
+
 
     public Long getId() {
         return id;
@@ -48,14 +54,6 @@ public class Expense {
         this.name = name;
     }
 
-    public String getTime() {
-        return time;
-    }
-
-    public void setTime(String time) {
-        this.time = time;
-    }
-
     public Category getCategory() {
         return category;
     }
@@ -70,5 +68,22 @@ public class Expense {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+
+    public Date getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(Date createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public Date getEndDate() {
+        return endDate;
+    }
+
+    public void setEndDate(Date endDate) {
+        this.endDate = endDate;
     }
 }

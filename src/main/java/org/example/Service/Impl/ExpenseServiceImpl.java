@@ -14,9 +14,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.Calendar;
+import java.util.Date;
+
 
 @Service
 public class ExpenseServiceImpl implements IExpenseService {
@@ -33,6 +38,7 @@ public class ExpenseServiceImpl implements IExpenseService {
         this.categoryRepository = categoryRepository;
         this.userRepository = userRepository;
     }
+
     @Transactional
     @Override
     public ExpenseDto add(ExpenseDto expenseDto) {
@@ -48,6 +54,7 @@ public class ExpenseServiceImpl implements IExpenseService {
         expense1 = expenseRepository.saveAndFlush(expense1);
         return ConvertToDto(expense1);
     }
+
     @Transactional
     @Override
     public ExpenseDto update(Long id, ExpenseDto expenseDto) {
@@ -55,8 +62,8 @@ public class ExpenseServiceImpl implements IExpenseService {
                 .orElseThrow(() -> new ResourceNotFoundException("expense with ID " + id + " not found."));
 
         expense.setName(expenseDto.getName());
-        expense.setTime(expenseDto.getTime());
-
+        expense.setCreatedAt(expenseDto.getCreatedAt());
+        expense.setEndDate(expenseDto.getEndDate());
         if (expenseDto.getCategoryId() != null) {
             Category category = categoryRepository.findById(expenseDto.getCategoryId())
                     .orElseThrow(() -> new ResourceNotFoundException("Category not found"));
@@ -73,6 +80,7 @@ public class ExpenseServiceImpl implements IExpenseService {
         return ConvertToDto(expense1);
 
     }
+
     @Transactional
     @Override
     public void deleteById(Long id) {
@@ -97,30 +105,40 @@ public class ExpenseServiceImpl implements IExpenseService {
         return expenses.stream().map(this::ConvertToDto).collect(Collectors.toList());
     }
 
-
     @Override
-    public List<ExpenseDto> getAllForLastWeek() {
-        List<Expense> expenses = expenseRepository.findAll();
-        return expenses.stream().filter(expense -> expense.getTime().equals("lastWeek")).map(this::ConvertToDto).collect(Collectors.toList());
+    public List<ExpenseDto> getExpensesBetweenDates(Long userId, Date createdAt, Date endDate) {
+        List<Expense> expenses = expenseRepository.findByUserIdAndCreatedAtBetween(userId, createdAt, endDate);
+        return expenses.stream().map(this::ConvertToDto).collect(Collectors.toList());
     }
 
     @Override
-    public List<ExpenseDto> getAllForLastMonth() {
-        List<Expense> expenses = expenseRepository.findAll();
-        return expenses.stream().filter(expense -> expense.getTime().equals("LastMonth")).map(this::ConvertToDto).collect(Collectors.toList());
+    public List<ExpenseDto> getAllForLastWeek(Long userId) {
+        Date oneWeekAgo = getDateWeeksAgo(1);
+        List<Expense> expenses = expenseRepository.findByUserIdAndCreatedAtAfter(userId, oneWeekAgo);
+        return expenses.stream().map(this::ConvertToDto).collect(Collectors.toList());
     }
 
     @Override
-    public List<ExpenseDto> getAllForLastThreeMonths() {
-        List<Expense> expenses = expenseRepository.findAll();
-        return expenses.stream().filter(expense -> expense.getTime().equals("LastThreeMonths")).map(this::ConvertToDto).collect(Collectors.toList());
+    public List<ExpenseDto> getAllForLastMonth(Long userId) {
+        Date oneMonthAgo = getDateMonthsAgo(1);
+        List<Expense> expenses = expenseRepository.findByUserIdAndCreatedAtAfter(userId, oneMonthAgo);
+        return expenses.stream().map(this::ConvertToDto).collect(Collectors.toList());
     }
+
+    @Override
+    public List<ExpenseDto> getAllForLastThreeMonths(Long userId) {
+        Date threeMonthsAgo = getDateMonthsAgo(3);
+        List<Expense> expenses = expenseRepository.findByUserIdAndCreatedAtAfter(userId, threeMonthsAgo);
+        return expenses.stream().map(this::ConvertToDto).collect(Collectors.toList());
+    }
+
 
     public ExpenseDto ConvertToDto(Expense expense) {
         ExpenseDto expenseDto = new ExpenseDto();
         expenseDto.setId(expense.getId());
         expenseDto.setName(expense.getName());
-        expenseDto.setTime(expense.getTime());
+        expenseDto.setCreatedAt(expense.getCreatedAt());
+        expenseDto.setEndDate(expense.getEndDate());
 
         if (expense.getCategory() != null) {
             expenseDto.setCategoryId(expense.getCategory().getId());
@@ -140,7 +158,8 @@ public class ExpenseServiceImpl implements IExpenseService {
         Expense expense = new Expense();
         expense.setId(expenseDto.getId());
         expense.setName(expenseDto.getName());
-        expense.setTime(expenseDto.getTime());
+        expense.setCreatedAt(expenseDto.getCreatedAt());
+        expense.setEndDate(expenseDto.getEndDate());
         if (expenseDto.getCategoryId() != null) {
             Category category = categoryRepository.findById(expenseDto.getCategoryId())
                     .orElseThrow(() -> new ResourceNotFoundException("Category not found"));
@@ -153,4 +172,16 @@ public class ExpenseServiceImpl implements IExpenseService {
         }
         return expense;
     }
+
+    private Date getDateWeeksAgo(int weeks) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.WEEK_OF_YEAR, -weeks);
+        return calendar.getTime();
     }
+
+    private Date getDateMonthsAgo(int months) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.MONTH, -months);
+        return calendar.getTime();
+    }
+}

@@ -7,6 +7,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -49,22 +51,27 @@ public class ExpenseController {
         List<ExpenseDto> expenseDtos = iExpenseService.getAll();
         return ResponseEntity.ok(expenseDtos);
     }
-
+    @GetMapping("/custom")
+    public List<ExpenseDto> getExpensesBetweenDates(@RequestParam Long userId, @RequestParam Date createdAt, @RequestParam  Date endDate) {
+        return iExpenseService.getExpensesBetweenDates(userId, createdAt, endDate);
+    }
     @GetMapping("/LastWeek")
-    public ResponseEntity<List<ExpenseDto>> getAllForLastWeek() {
-        List<ExpenseDto> expenseDtos = iExpenseService.getAllForLastWeek();
+    public ResponseEntity<List<ExpenseDto>> getAllForLastWeek(@PathVariable Long userId) {
+        List<ExpenseDto> expenseDtos = iExpenseService.getAllForLastWeek(userId);
         return ResponseEntity.ok(expenseDtos);
     }
 
     @GetMapping("/LastMonth")
-    public ResponseEntity<List<ExpenseDto>> getAllForLastMonth() {
-        List<ExpenseDto> expenseDtos = iExpenseService.getAllForLastMonth();
+    public ResponseEntity<List<ExpenseDto>> getAllForLastMonth(@PathVariable Long userId) {
+        List<ExpenseDto> expenseDtos = iExpenseService.getAllForLastMonth(userId);
         return ResponseEntity.ok(expenseDtos);
     }
 
     @GetMapping("/LastThreeMonths")
-    public ResponseEntity<List<ExpenseDto>> getAllForLastThreeMonths() {
-        List<ExpenseDto> expenseDtos = iExpenseService.getAllForLastThreeMonths();
+    public ResponseEntity<List<ExpenseDto>> getAllForLastThreeMonths(@PathVariable Long userId) {
+        List<ExpenseDto> expenseDtos = iExpenseService.getAllForLastThreeMonths(userId);
         return ResponseEntity.ok(expenseDtos);
     }
+
+
 }

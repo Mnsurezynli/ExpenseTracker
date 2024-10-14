@@ -1,7 +1,10 @@
 package org.example.Service;
 
 import org.example.Dto.ExpenseDto;
+import org.example.Model.Expense;
 
+import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 
 public interface IExpenseService {
@@ -14,15 +17,17 @@ public interface IExpenseService {
 
     ExpenseDto getExpense(Long expenseId);
 
-
     List<ExpenseDto> getAll();
 
+    List<ExpenseDto> getExpensesBetweenDates(Long userId,Date createdAt, Date endDate);
 
-    List<ExpenseDto> getAllForLastWeek();
+    List<ExpenseDto> getAllForLastWeek(Long userId);
+
+    List<ExpenseDto> getAllForLastMonth(Long userId);
+
+    List<ExpenseDto> getAllForLastThreeMonths(Long userId);
 
 
-    List<ExpenseDto> getAllForLastMonth();
 
-    List<ExpenseDto> getAllForLastThreeMonths();
 
 }

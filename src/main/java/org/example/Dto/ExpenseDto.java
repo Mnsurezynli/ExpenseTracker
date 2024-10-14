@@ -3,14 +3,21 @@ package org.example.Dto;
 import org.example.Model.Category;
 import org.example.Model.User;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Date;
+
 public class ExpenseDto {
-    private Long id ;
+    private Long id;
     private String name;
-    private String time ;
+    private Date createdAt;
+    private Date endDate;
     private Long categoryId;
     private Long userId;
+
     public ExpenseDto() {
     }
+
     public Long getId() {
         return id;
     }
@@ -27,14 +34,22 @@ public class ExpenseDto {
         this.name = name;
     }
 
-    public String getTime() {
-        return time;
+    public Date getCreatedAt() {
+        return createdAt;
     }
 
-    public void setTime(String time) {
-        this.time = time;
+    public void setCreatedAt(Date createdAt) {
+        this.createdAt = createdAt;
     }
 
+    public Date getEndDate() {
+
+        return endDate;
+    }
+
+    public void setEndDate(Date endDate) {
+        this.endDate = endDate;
+    }
 
     public Long getCategoryId() {
         return categoryId;
@@ -51,4 +66,6 @@ public class ExpenseDto {
     public void setUserId(Long userId) {
         this.userId = userId;
     }
+
+
 }

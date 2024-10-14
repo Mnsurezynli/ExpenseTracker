@@ -69,6 +69,7 @@ public class CategoryServiceImpl implements ICategoryService {
     public Category ConvertToEntity(CategoryDto categoryDto) {
         Category category = new Category();
         category.setId(categoryDto.getId());
+        category.setName(categoryDto.getName());
         return category;
     }
 }

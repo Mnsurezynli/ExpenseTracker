@@ -4,17 +4,13 @@ import org.example.Model.Category;
 import org.example.Model.User;
 
 public class ExpenseDto {
-
     private Long id ;
     private String name;
     private String time ;
     private Long categoryId;
     private Long userId;
-
-
     public ExpenseDto() {
     }
-
     public Long getId() {
         return id;
     }

@@ -8,10 +8,12 @@ import org.example.Model.Expense;
 import org.example.Model.User;
 import org.example.Repository.CategoryRepository;
 import org.example.Repository.ExpenseRepository;
+import org.example.Repository.UserRepository;
 import org.example.Service.IExpenseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -23,24 +25,30 @@ public class ExpenseServiceImpl implements IExpenseService {
 
     private CategoryRepository categoryRepository;
 
+    private UserRepository userRepository;
+
     @Autowired
-    public ExpenseServiceImpl(ExpenseRepository expenseRepository, CategoryRepository categoryRepository) {
+    public ExpenseServiceImpl(ExpenseRepository expenseRepository, CategoryRepository categoryRepository, UserRepository userRepository) {
         this.expenseRepository = expenseRepository;
         this.categoryRepository = categoryRepository;
+        this.userRepository = userRepository;
     }
-
+    @Transactional
     @Override
     public ExpenseDto add(ExpenseDto expenseDto) {
-        Optional<Expense> expense = expenseRepository.findById(expenseDto.getId());
-        if (expense.isPresent()) {
-            throw new ResourceAlreadyExistsException("this expense is already exists");
+        System.out.println("Category ID: " + expenseDto.getCategoryId());
+        System.out.println("User ID: " + expenseDto.getUserId());
+        if (expenseDto.getId() != null) {
+            Optional<Expense> expense = expenseRepository.findById(expenseDto.getId());
+            if (expense.isPresent()) {
+                throw new ResourceAlreadyExistsException("this expense is already exists");
+            }
         }
         Expense expense1 = ConvertToEntity(expenseDto);
         expense1 = expenseRepository.saveAndFlush(expense1);
-        ExpenseDto expenseDto1 = ConvertToDto(expense1);
-        return expenseDto1;
+        return ConvertToDto(expense1);
     }
-
+    @Transactional
     @Override
     public ExpenseDto update(Long id, ExpenseDto expenseDto) {
         Expense expense = expenseRepository.findById(id)
@@ -48,21 +56,31 @@ public class ExpenseServiceImpl implements IExpenseService {
 
         expense.setName(expenseDto.getName());
         expense.setTime(expenseDto.getTime());
-   //     expense.setCategory(new Category());
-      //  expense.setUser(new User());
 
+        if (expenseDto.getCategoryId() != null) {
+            Category category = categoryRepository.findById(expenseDto.getCategoryId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Category not found"));
+            expense.setCategory(category);
+        }
 
+        if (expenseDto.getUserId() != null) {
+            User user = userRepository.findById(expenseDto.getUserId())
+                    .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+            expense.setUser(user);
+        }
 
         Expense expense1 = expenseRepository.saveAndFlush(expense);
         return ConvertToDto(expense1);
+
     }
-
-
+    @Transactional
     @Override
-    public void deleteById(Long expenseId) {
-        Expense expense = expenseRepository.findById(expenseId)
-                .orElseThrow(() -> new ResourceNotFoundException("expense with ID " + expenseId + " not found."));
-        expenseRepository.deleteById(expenseId);
+    public void deleteById(Long id) {
+        System.out.println("Attempting to delete expense with ID: " + id);
+        Expense expense = expenseRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Expense with ID " + id + " not found."));
+        expenseRepository.deleteById(id);
+        System.out.println("Expense with ID: " + id + " deleted successfully");
     }
 
     @Override
@@ -103,8 +121,18 @@ public class ExpenseServiceImpl implements IExpenseService {
         expenseDto.setId(expense.getId());
         expenseDto.setName(expense.getName());
         expenseDto.setTime(expense.getTime());
-        expenseDto.setCategoryId(expense.getCategory().getId());
-        expenseDto.setUserId(expense.getUser().getId());
+
+        if (expense.getCategory() != null) {
+            expenseDto.setCategoryId(expense.getCategory().getId());
+        } else {
+            expenseDto.setCategoryId(null);
+        }
+
+        if (expense.getUser() != null) {
+            expenseDto.setUserId(expense.getUser().getId());
+        } else {
+            expenseDto.setUserId(null);
+        }
         return expenseDto;
     }
 
@@ -113,8 +141,16 @@ public class ExpenseServiceImpl implements IExpenseService {
         expense.setId(expenseDto.getId());
         expense.setName(expenseDto.getName());
         expense.setTime(expenseDto.getTime());
-     //   expense.setCategory(new Category());
-     //   expense.setUser(new User());
+        if (expenseDto.getCategoryId() != null) {
+            Category category = categoryRepository.findById(expenseDto.getCategoryId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Category not found"));
+            expense.setCategory(category);
+        }
+        if (expenseDto.getUserId() != null) {
+            User user = userRepository.findById(expenseDto.getUserId())
+                    .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+            expense.setUser(user);
+        }
         return expense;
     }
-}
+    }

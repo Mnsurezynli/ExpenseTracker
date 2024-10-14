@@ -32,9 +32,9 @@ public class ExpenseController {
         return ResponseEntity.ok(updateExpense);
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long expenseId) {
-        iExpenseService.deleteById(expenseId);
+   @DeleteMapping("/delete/{id}")
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        iExpenseService.deleteById(id);
         return ResponseEntity.noContent().build();
     }
 

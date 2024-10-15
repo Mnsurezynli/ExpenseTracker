@@ -3,6 +3,7 @@ package org.example.Controller;
 import org.example.Dto.ExpenseDto;
 import org.example.Service.IExpenseService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -52,26 +53,27 @@ public class ExpenseController {
         return ResponseEntity.ok(expenseDtos);
     }
     @GetMapping("/custom")
-    public List<ExpenseDto> getExpensesBetweenDates(@RequestParam Long userId, @RequestParam Date createdAt, @RequestParam  Date endDate) {
+    public List<ExpenseDto> getExpensesBetweenDates(@RequestParam Long userId, @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date createdAt, @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)Date endDate) {
         return iExpenseService.getExpensesBetweenDates(userId, createdAt, endDate);
     }
-    @GetMapping("/LastWeek")
+    @GetMapping("/LastWeek/userId/{userId}")
     public ResponseEntity<List<ExpenseDto>> getAllForLastWeek(@PathVariable Long userId) {
         List<ExpenseDto> expenseDtos = iExpenseService.getAllForLastWeek(userId);
         return ResponseEntity.ok(expenseDtos);
     }
 
-    @GetMapping("/LastMonth")
-    public ResponseEntity<List<ExpenseDto>> getAllForLastMonth(@PathVariable Long userId) {
+    @GetMapping("/LastMonth/{userId}")
+    public ResponseEntity<List<ExpenseDto>> getAllForLastMonth(@PathVariable("userId") Long userId) {
         List<ExpenseDto> expenseDtos = iExpenseService.getAllForLastMonth(userId);
         return ResponseEntity.ok(expenseDtos);
     }
 
-    @GetMapping("/LastThreeMonths")
-    public ResponseEntity<List<ExpenseDto>> getAllForLastThreeMonths(@PathVariable Long userId) {
+    @GetMapping("/LastThreeMonths/{userId}")
+    public ResponseEntity<List<ExpenseDto>> getAllForLastThreeMonths(@PathVariable("userId") Long userId) {
         List<ExpenseDto> expenseDtos = iExpenseService.getAllForLastThreeMonths(userId);
         return ResponseEntity.ok(expenseDtos);
     }
+
 
 
 }
